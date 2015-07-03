@@ -1,43 +1,6 @@
 library(compositions)
 data(ArcticLake)
-ilrDefinition <- function(sbp, side="+-") {
-  
-  if (nrow(sbp) != (ncol(sbp)-1)) stop("SBP not valid")
-  
-  ilrDef <- vector()
-  for (n in 1:nrow(sbp)) {
-    pos <- names(sbp[n,][which(sbp[n,] == 1)])
-    neg <- names(sbp[n,][which(sbp[n,] == -1)])
-    if (side=="-+") {
-      pos <- rev(pos)
-      neg <- rev(neg)
-    }
-    pos.group <- character()
-    neg.group <- character()
-    for (i in 1:length(pos)) {
-      if (i == 1) {
-        pos.group <- paste(pos.group,pos[i], sep="")
-      } else {
-        pos.group <- paste(pos.group,pos[i], sep=",")
-      }
-    }
-    for (i in 1:length(neg)) {
-      if (i == 1) {
-        neg.group <- paste(neg.group,neg[i], sep="")
-      } else {
-        neg.group <- paste(neg.group,neg[i], sep=",")
-      }
-    }
-    if (side=="+-") {
-      ilrDef[n] <- paste("[",pos.group," | ",neg.group,"]", sep="")
-    } else if (side=="-+") {
-      ilrDef[n] <- paste("[",neg.group," | ",pos.group,"]", sep="")
-    }
-    
-  }
-  
-  ilrDef
-}
+# source(scripts/ilrDefinition_1.2.R)
 rotate <- function(xy, deg, center = c(0, 0)) {
   xy <- unclass(xy)
   alpha <- -deg*pi/180 # rotation angle
@@ -58,9 +21,9 @@ arrowBal <- function(labels, deg = 0, rad = 1, center = c(0,0), pos = c(1, 1), c
   y1 <- sin(deg*pi/180)*rad + center[2]
   y2 <- sin((deg+90)*pi/180)*rad + center[2]
   arrows(x0, y0, x1, y1, col = color)
-  text(x1, y1, labels = labels[1], pos = pos[1], col = color)
+  text(x1, y1, labels = labels[1], pos = pos[1], col = color, cex = 0.7)
   arrows(x0, y0, x2, y2, col = color)
-  text(x2, y2, labels = labels[2], pos = pos[2], col = color)
+  text(x2, y2, labels = labels[2], pos = pos[2], col = color, cex = 0.7)
 }
 
 
@@ -103,6 +66,6 @@ points(rotate(bal2, deg = 120), col = "red", cex = 0.75) # rotate 240 deg
 points(rotate(bal3, deg = 60), col = "blue", cex = 1) # rotate 300 deg
 rad = 2
 lines(circle(rad = rad))
-arrowBal(labels = colnames(bal2), deg = 0, rad = rad, pos = c(4,3), color = "black")
+arrowBal(labels = colnames(bal1), deg = 0, rad = rad, pos = c(4,3), color = "black")
 arrowBal(labels = colnames(bal2), deg = 120, rad = rad, pos = c(2,2), color = "red")
 arrowBal(labels = colnames(bal3), deg = 60, rad = rad, pos = c(4,2), color = "blue")
