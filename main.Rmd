@@ -1,23 +1,24 @@
 ---
-title: "R for soil scientists"
+title: "The analysis of compositional data in soil science with `R`"
 author: "Serge-Étienne Parent"
-date: "29 juin 2015"
+date: "Montréal, 5th of July, 2015"
 output: html_document
 ---
 
 # What
 
-**R** is a modular open source statiscitcal programming environment mainly used for data analysis and plotting. It can be used for classical statitics, data mining and machine learning in a large range of fields: ecology, economy, geography, demography, climatology, and... soils!
+**R** is a modular open source statistical programming environment mainly used for data analysis and plotting. It can be used for classical statistics, data mining and machine learning in a large range of fields: ecology, economy, geography, demography, climatology, and... soils!
 
 # Why
 
 * Open source
-* Synergy
 * Expandable
-* Reproductability
-* Fun (no really!)
+* Reproducible
+* Popular
+* Fun (no, really!)
 
 ![Nature](images/TB2.jpg)
+
 [Source: Programming tools: Adventures with R, Nature toolbox](http://www.nature.com/news/programming-tools-adventures-with-r-1.16609)
 
 # Resources
@@ -38,46 +39,52 @@ output: html_document
 * R blogs: http://www.r-bloggers.com/
 * Resources proposed by the California soil resource laboratory: http://casoilresource.lawr.ucdavis.edu/software/r-advanced-statistical-package/
 
-# Basics
+# `R` basics
 > "Freedom is the freedom to say that two plus two make four. If that is granted, all else follows." - George Orwell
 
 ```{r}
 2 + 2
 ```
 
-<- is assign. Numeric class:
+<- is assign. = could also be used, but it is generally reserved for asigning arguments in functions. Asing a numeric value:
 ```{r}
 x <- 2 + 2
 x
 ```
 
-## Data classes
-
-Character class:
+`numeric` is a data class. There are other classes, like `character`:
 
 ```{r}
 favoriteAnimal <- 'Jackalope' # comment: you can use ' ' or " "
 favoriteAnimal
 ```
 
-Boolean class:
+The `factor` class:
+
+```{r}
+soilOrder <-  factor(c("Brunisolic", "Chernozemic", "Organic", "Podzolic", "Unclassified"))
+soilOrder
+```
+
+The boolean, or `logical` class:
+
 ```{r}
 isR <- TRUE
 isR
 ```
 
-Function class:
+`function` class:
 ```{r}
 powerRanger <- function(x, power) {
-  y <- range(x^power) # range is a builtin function
+  y <- range(x^power) # range is a built in function
   return(y)
 }
-powerRanger(x = seq(from = 2, to = 10, by = 1), power = 2) # x is a vector, seq is a builtin function
+powerRanger(x = seq(from = 2, to = 10, by = 1), power = 2) # x is a vector, seq is a built in function
 ```
 
 ## Vector and matrices
 
-Vectors and matrices contain a single class:
+Vectors and matrices are containers for a single data class:
 ```{r}
 vectorNum <- c(2, 6, 1, 7, 8)
 vectorNum
@@ -97,7 +104,7 @@ matrixNum
 
 ## Lists and data frames
 
-Lists are collections of heterogeneous data. They are very useful to store function outputs in loops, like the output of anovas of linear regressions. Data frames are lists with equal number of elements. They are used for handling tables.
+Lists (`list`) are collections of heterogeneous data. They are very useful to store function outputs in loops, like the output of anovas or linear regressions. Data frames (`data.frame`) is a list of vectors with equal length. They are used for handling tables.
 
 ```{r}
 listOfThings <- list(order = factor(c("Brunisolic", "Chernozemic", "Organic", "Podzolic", "Unclassified")), 
@@ -113,17 +120,17 @@ soilTable
 soilTable$order
 ```
 
-# RStudio
+## RStudio
 
-**R** can be used with only a terminal and a text editor, but GUIs are useful. I highly recommand **RStudio**, an open source interface for **R** developed and supported by an eponym commercial enterprise. It can be downloaded from: http://www.rstudio.com/.
+**R** can be used with only a terminal and a text editor, but GUIs are useful. I highly recommend **RStudio**, an open source interface for **R** developed and supported by an eponym commercial enterprise. It can be downloaded from: http://www.rstudio.com/.
 
 ![RStudio screenshot](images/rstudio_screenshot.png)
 
 Other interfaces: RGUI (default in Windows versions of R), [Jupyter](http://jupyter.org/), RCommander, [RkWard (Linux only)](https://rkward.kde.org/), [Deducer](http://www.deducer.org/pmwiki/pmwiki.php?n=Main.DeducerManual), [JGR](http://rforge.net/JGR/), etc.
 
-## Import data
+## Importing data in `R`
 
-Builtin data
+Built in data:
 
 ```{r}
 data(cars)
@@ -131,7 +138,7 @@ summary(cars)
 boxplot(cars, col = c('red', 'blue'))
 ```
 
-Import data
+Import data:
 
 ```{r}
 data <- read.csv("data/mango.csv", sep = ";", dec = ".", header = TRUE)
@@ -184,7 +191,7 @@ Packages can be installed and loaded by using the "Packages" tab in RStudio. To 
 library(nortest)
 ```
 
-Suggested packages (very unexhaustive):
+Suggested packages (nonexhaustive):
 
 * `ade4` and `vegan` for ecological analysis
 * `aqp` for pedology analysis
@@ -201,11 +208,11 @@ Suggested packages (very unexhaustive):
 * `soiltexture` for guess what
 * `zCompositions` for handling zeros in CoDa
 
-# CoDa
+# CoDa in `R`
 
-## Preprocessing: Exploration of our dataset and prepare for analysis
+## Preprocessing: Exploration of our data set and prepare for analysis
 
-Compositional datasets must be free of missing values and zeros. Both can be imputed in `R` without prior data transformation, because packages `robCompositions` (missing values) and `zCompositions` (zeros) already include CoDa compliant procedures. On the other hand, outlier detection routines must be run across transformed values.
+Compositional data sets must be free of missing values and zeros. Both can be imputed in `R` without prior data transformation, because packages `robCompositions` (missing values) and `zCompositions` (zeros) already include CoDa compliant procedures. On the other hand, outlier detection routines must be run across transformed values.
 
 ### Variables to consider as parts of the simplex
 
@@ -214,7 +221,7 @@ varLeaf <- c("fol.N.g.kg", "fol.P.g.kg", "fol.K.g.kg", "fol.Ca.g.kg", "fol.Mg.g.
 parts <- data[varLeaf]
 ```
 
-The dataset is exempt of any zeros or missing values. Let's **replace small values by zeros**.
+The data set is exempt of any zeros or missing values. Let's **replace small values by zeros**.
 
 ```{r}
 apply(parts, 2, min)
@@ -225,7 +232,7 @@ We could assume, for this tutorial, that detection limit is 0.7 for all parts,
 ```{r}
 parts[parts < 0.7] <- 0
 apply(parts, 2, min)
-sum(parts == 0) # in a boolean sum, a FALSE is 0 and TRUE is 1. The sum is the number of TRUEs
+sum(parts == 0) # in a Boolean sum, a FALSE is 0 and TRUE is 1. The sum is the number of TRUEs
 
 countZero <- function(x) {
   sum(x == 0, na.rm = TRUE)
@@ -271,7 +278,7 @@ The script to impute missing value doesn't like zeros. We remove the lines tagge
 library(robCompositions)
 
 partsNA <- parts
-partsNA[!isZeroRow, ] <- impKNNa(parts[!isZeroRow, ], method = 'knn', k = 3, metric = 'Aitchison')$xImp # ! inverses a boolean and $xImp gets the imputed matrix
+partsNA[!isZeroRow, ] <- impKNNa(parts[!isZeroRow, ], method = 'knn', k = 3, metric = 'Aitchison')$xImp # ! inverses a Boolean and $xImp gets the imputed matrix
 
 anyNA(partsNA)
 
@@ -289,7 +296,7 @@ Three kind of zeroes can be identified:
 * Count zeroes: undetected count data (sample size too small)
 * Essential zero: true zero.
 ** Observed termites in permafrost or diamonds in podzols or votes for the Bloc québécois in Calgary-Centre: is this variable important?
-** Zero spending in alcohol in a budget of a person that stricktly does not drink: is this observation important (any exmaple in soil science)?
+** Zero spending in alcohol in a budget of a person that strictly does not drink: is this observation important (any example in soil science)?
 
 
 ```{r}
@@ -302,7 +309,7 @@ rbind(partsNA[isZeroRow, ][1, ], partsNAZ[isZeroRow, ][1, ])
 
 ## CoDa transformation
 
-Now that the dataset is clean, close the simplex.
+Now that the data set is clean, close the simplex.
 
 ```{r}
 library(compositions)
@@ -353,6 +360,8 @@ CoDaDendrogram2(comp, V = psi,  equal.height = TRUE, show.range = TRUE, type = "
 
 ### Outliers
 
+As written previously, outliers are preferably detected across transformed data.
+
 ```{r}
 plot(comp)
 plot(comp, center = TRUE, scale = TRUE)
@@ -379,7 +388,7 @@ mean(comp) # because comp has class acomp, mean is in fact mean.acomp, a special
 apply(partsNAZ, 2, mean) / 1000 # the biased mean
 ```
 
-# Soils
+# Soils-specific applications of CoDa in `R`
 
 ```{r}
 library(compositions)
@@ -471,7 +480,38 @@ Source code: `scripts/ilr-sbp-rotation-axe.R`
 
 ## PCA
 
+We use the Hydrochem dataset provided by the `R` compositions package, which, as described in the help file, "*contains a hydrochemical amount/compositional data set obtained from several rivers in the Llobregat river basin, in northeastern Spain.*".
+
 ```{r}
 library(compositions)
 data("Hydrochem")
+
+parts <- Hydrochem[, 6:19]
+parts$Fv <- 1e6 - apply(parts[, 1:14], 1, sum)
+comp <- acomp(parts)
+
+sbp <- read.csv('data/sbpHydrochem.csv', sep = ';', header = TRUE)
+psi <- gsi.buildilrBase(t(sbp))
+bal <- ilr(comp, V = psi)
+colnames(bal) <- ilrDefinition(sbp, side = '-+')
+CoDaDendrogram(comp, V = psi)
+```
+
+Many axis reduction techniques can be applied to this dataset. The obviously most well-known and common axi reduction technique is the principal component analysis. The `base` package contain the necessary functions for PCA. But when it comes to plotting results and going further, I recommend the use of the `vegan` package.
+
+```{r}
+# install.packages("vegan")
+library('vegan')
+
+pcaHydrochem <- rda(bal, scale = FALSE) # scale = FALSE: ilr are geometrically normalized.
+
+scl <- 2 # Focus on the angle between descriptors
+par(mar = c(4, 4, 1, 1))
+plot(pcaHydrochem, type = "n", scaling = scl)
+points(pcaHydrochem, display = "sites", col = Hydrochem$River, scaling = scl,
+       pch = 16, cex = 0.8)
+points(pcaHydrochem, display = "species", scaling = scl, cex = 0.5, col = "darkcyan")
+text(pcaHydrochem, display = "species", scaling = scl, cex = 0.8, col = "black")
+legend("topright", legend = levels(Hydrochem$River), bty = "n",
+                      col = factor(levels(Hydrochem$River)), pch = 16)
 ```
