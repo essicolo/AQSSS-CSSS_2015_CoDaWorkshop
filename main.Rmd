@@ -358,6 +358,21 @@ CoDaDendrogram2(comp, V = psi,  equal.height = TRUE, show.range = TRUE, type = "
 
 ```
 
+Why label balances as [Denominator group | Numerator group] and not Numerator/Denominator? The positive balance leans toward the numerator and reversely. Conventionnaly, in 2D, the positive side is on the right and on top. Graphically, placing the numerator on the right seemed easier to interpret.
+
+```{r}
+library(ggplot2)
+library(reshape2)
+isoLR.df <- data.frame(Cultivar = data$Cultivar, isoLR[, -1])
+colnames(isoLR.df) <- c('Cultivar', colnames(isoLR)[-1])
+isoLR.gg <-  melt(isoLR.df, id = "Cultivar")
+
+ggplot(isoLR.gg, aes(x = Cultivar, y = value)) +
+  facet_grid(. ~ variable, scales = 'free') +
+  geom_boxplot() +
+  coord_flip()
+```
+
 ### Outliers
 
 As written previously, outliers are preferably detected across transformed data.
