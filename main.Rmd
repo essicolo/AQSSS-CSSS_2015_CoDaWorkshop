@@ -371,6 +371,7 @@ ggplot(isoLR.gg, aes(x = Cultivar, y = value)) +
   facet_grid(. ~ variable, scales = 'free') +
   geom_boxplot() +
   coord_flip()
+
 ```
 
 ### Outliers
@@ -476,6 +477,11 @@ lm2 <- lm(bal[, 2] ~ ArcticLake[, 4])
 
 predBal1 <- predict(lm1)
 predBal2 <- predict(lm2)
+
+plot(bal[, 1], y = -ArcticLake[, 4], col = 'red', xlim = c(-4, 4))
+points(bal[, 2], y = -ArcticLake[, 4], col = 'blue')
+lines(predBal1, y = -ArcticLake[, 4], col = 'red')
+lines(predBal1, y = -ArcticLake[, 4], col = 'red')
 
 predComp <- unclass(ilrInv(cbind(predBal1, predBal2), V = psi)) * 100
 
